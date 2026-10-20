@@ -8,71 +8,104 @@
   :root {
     --bg1:#f5f7fa; --bg2:#e8ecf3; --card:rgba(255,255,255,.72);
     --text:#1f2937; --muted:#6b7280; --blue:#2563eb; --darkblue:#1e3a8a;
-    --accent:#3b82f6; --border:rgba(255,255,255,.6);
+    --accent:#3b82f6; --border:rgba(255,255,255,.6); --good:#16a34a; --warn:#d97706; --bad:#dc2626;
   }
   * { box-sizing:border-box; }
-  body {
-    margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(135deg,var(--bg1),var(--bg2));
-    font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
-    color:var(--text); padding:24px; overflow:hidden;
-  }
-  .orb { position:fixed; border-radius:50%; filter:blur(60px); opacity:.35; pointer-events:none; animation:float 12s ease-in-out infinite; }
-  .orb.a { width:320px; height:320px; background:#dbeafe; top:-80px; left:-80px; }
-  .orb.b { width:280px; height:280px; background:#e0e7ff; bottom:-60px; right:-60px; animation-delay:-6s; }
-  @keyframes float { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-20px)} }
-  .card {
-    position:relative; width:100%; max-width:620px;
-    background:var(--card); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
-    border:1px solid var(--border); border-radius:24px; padding:48px 36px;
-    box-shadow:0 30px 80px rgba(30,58,138,.12), 0 2px 6px rgba(0,0,0,.04);
-    animation:rise .7s cubic-bezier(.2,.8,.2,1) both;
-  }
-  @keyframes rise { from{opacity:0; transform:translateY(24px)} to{opacity:1; transform:translateY(0)} }
-  h1 { margin:0 0 6px; font-size:2rem; font-weight:700; letter-spacing:-.02em; }
-  p.sub { margin:0 0 32px; color:var(--muted); font-size:1rem; }
+  body { margin:0; min-height:100vh; font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif; color:var(--text); background:linear-gradient(135deg,var(--bg1),var(--bg2)); overflow-x:hidden; }
+  .orb { position:fixed; border-radius:50%; filter:blur(70px); opacity:.3; pointer-events:none; animation:float 14s ease-in-out infinite; z-index:0; }
+  .orb.a { width:360px; height:360px; background:#dbeafe; top:-100px; left:-100px; }
+  .orb.b { width:300px; height:300px; background:#e0e7ff; bottom:-80px; right:-80px; animation-delay:-7s; }
+  @keyframes float { 0%,100%{transform:translate(0,0)} 50%{transform:translate(24px,-24px)} }
+  nav.topbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; padding:16px 28px; background:rgba(255,255,255,.55); backdrop-filter:blur(14px); border-bottom:1px solid var(--border); }
+  .brand { font-weight:700; font-size:1.1rem; letter-spacing:-.01em; color:var(--darkblue); }
+  .navlinks { display:flex; gap:18px; font-size:.9rem; color:var(--muted); }
+  .navlinks a { color:var(--muted); text-decoration:none; transition:color .2s; }
+  .navlinks a:hover { color:var(--blue); }
+  main { position:relative; z-index:1; max-width:760px; margin:0 auto; padding:40px 20px 60px; }
+  .card { background:var(--card); backdrop-filter:blur(18px); border:1px solid var(--border); border-radius:24px; padding:44px 36px; box-shadow:0 30px 80px rgba(30,58,138,.12),0 2px 6px rgba(0,0,0,.04); animation:rise .7s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes rise { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  h1 { margin:0 0 6px; font-size:2.1rem; font-weight:700; letter-spacing:-.02em; }
+  p.sub { margin:0 0 30px; color:var(--muted); }
   .input-wrap { position:relative; }
-  input {
-    width:100%; padding:16px 52px 16px 18px; font-size:1.1rem;
-    border-radius:14px; border:1px solid #d1d5db; background:rgba(255,255,255,.9);
-    color:var(--text); outline:none; transition:border-color .25s, box-shadow .25s, transform .25s;
-  }
+  input { width:100%; padding:16px 56px 16px 18px; font-size:1.1rem; border-radius:14px; border:1px solid #d1d5db; background:rgba(255,255,255,.9); color:var(--text); outline:none; transition:border-color .25s,box-shadow .25s,transform .25s; }
   input:focus { border-color:var(--accent); box-shadow:0 0 0 4px rgba(59,130,246,.15); transform:translateY(-1px); }
-  .toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.2rem; transition:color .2s, transform .2s; }
+  .toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.2rem; transition:color .2s,transform .2s; }
   .toggle:hover { color:var(--blue); transform:translateY(-50%) scale(1.1); }
-  .bar { margin-top:22px; height:10px; border-radius:6px; background:rgba(30,58,138,.08); overflow:hidden; }
-  .bar > div { height:100%; width:0%; background:linear-gradient(90deg,var(--blue),var(--darkblue)); border-radius:6px; transition:width .5s cubic-bezier(.2,.8,.2,1); }
-  .result { margin-top:30px; font-size:1.3rem; line-height:1.7; text-align:center; min-height:72px; opacity:0; animation:fadeIn .6s .2s forwards; }
+  .row { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+  .btn { padding:10px 16px; border-radius:10px; border:1px solid #d1d5db; background:rgba(255,255,255,.9); color:var(--text); cursor:pointer; font-size:.9rem; transition:all .2s; }
+  .btn:hover { border-color:var(--accent); color:var(--blue); transform:translateY(-1px); }
+  .btn.primary { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .btn.primary:hover { background:var(--darkblue); }
+  .strength { margin-top:20px; display:flex; align-items:center; gap:12px; }
+  .strength-bar { flex:1; height:10px; border-radius:6px; background:rgba(30,58,138,.08); overflow:hidden; }
+  .strength-bar > div { height:100%; width:0%; border-radius:6px; transition:width .5s cubic-bezier(.2,.8,.2,1), background .3s; }
+  .strength-label { font-size:.9rem; font-weight:600; min-width:90px; text-align:right; }
+  .result { margin-top:26px; font-size:1.25rem; line-height:1.7; text-align:center; min-height:72px; opacity:0; animation:fadeIn .6s .2s forwards; }
   @keyframes fadeIn { to{opacity:1} }
   .blue { color:var(--blue); font-weight:700; }
   .darkblue { color:var(--darkblue); font-weight:700; }
-  .hint { margin-top:14px; font-size:.85rem; color:var(--muted); text-align:center; letter-spacing:.02em; }
+  .hint { margin-top:12px; font-size:.85rem; color:var(--muted); text-align:center; }
+  .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-top:34px; }
+  .feat { background:rgba(255,255,255,.6); border:1px solid var(--border); border-radius:16px; padding:18px; transition:transform .25s, box-shadow .25s; }
+  .feat:hover { transform:translateY(-4px); box-shadow:0 12px 30px rgba(30,58,138,.1); }
+  .feat h3 { margin:0 0 6px; font-size:1rem; color:var(--darkblue); }
+  .feat p { margin:0; font-size:.85rem; color:var(--muted); line-height:1.5; }
+  footer { text-align:center; color:var(--muted); font-size:.8rem; margin-top:40px; }
 </style>
 </head>
 <body>
   <div class="orb a"></div>
   <div class="orb b"></div>
-  <div class="card">
-    <h1>How good is my password?</h1>
-    <p class="sub">Type a password to see how long it would take to crack.</p>
-    <div class="input-wrap">
-      <input id="pw" type="password" autocomplete="off" spellcheck="false" placeholder="Enter a password">
-      <button class="toggle" id="tog" aria-label="Toggle visibility">👁</button>
+  <nav class="topbar">
+    <div class="brand">🔐 PassMeter</div>
+    <div class="navlinks">
+      <a href="#checker">Checker</a>
+      <a href="#tips">Tips</a>
+      <a href="#about">About</a>
     </div>
-    <div class="bar"><div id="bar"></div></div>
-    <div class="result" id="result">Enter a password to begin.</div>
-    <div class="hint" id="hint"></div>
-  </div>
+  </nav>
+  <main>
+    <section id="checker" class="card">
+      <h1>How good is my password?</h1>
+      <p class="sub">Type a password to see how long it would take to crack.</p>
+      <div class="input-wrap">
+        <input id="pw" type="password" autocomplete="off" spellcheck="false" placeholder="Enter a password">
+        <button class="toggle" id="tog" aria-label="Toggle visibility">👁</button>
+      </div>
+      <div class="row">
+        <button class="btn" id="gen">Generate strong password</button>
+        <button class="btn" id="copy">Copy</button>
+        <button class="btn" id="clear">Clear</button>
+      </div>
+      <div class="strength">
+        <div class="strength-bar"><div id="bar"></div></div>
+        <div class="strength-label" id="label">—</div>
+      </div>
+      <div class="result" id="result">Enter a password to begin.</div>
+      <div class="hint" id="hint"></div>
+    </section>
+    <section id="tips" class="features">
+      <div class="feat"><h3>Length matters</h3><p>Each extra character multiplies the search space. Aim for 12+ characters.</p></div>
+      <div class="feat"><h3>Mix character types</h3><p>Combine upper, lower, digits and symbols to widen the charset.</p></div>
+      <div class="feat"><h3>Avoid common words</h3><p>Dictionary attacks crack "password123" in seconds.</p></div>
+      <div class="feat"><h3>Use a manager</h3><p>Let a password manager generate and store unique passwords.</p></div>
+    </section>
+    <section id="about" style="margin-top:34px;text-align:center;color:var(--muted);font-size:.9rem;">
+      <p>Estimates use brute-force math: guesses ÷ cracking speed (1990: 1k/s · today: 10B/s).</p>
+    </section>
+    <footer>PassMeter · static, privacy-friendly · your password never leaves your browser.</footer>
+  </main>
 <script>
 const SPEED_1990 = 1e3;
 const SPEED_TODAY = 1e10;
-
 function compact(n){
-  if (n < 1000) return n.toFixed(n<10?2:n<100?1:0);
+  if (!isFinite(n)) return "∞";
+  if (n < 1000) return (n<10?n.toFixed(2):n<100?n.toFixed(1):Math.round(n));
   const units = [["K",1e3],["M",1e6],["B",1e9],["T",1e12],["Q",1e15]];
   let u = units[0];
   for (const x of units){ if (n >= x[1]) u=x; else break; }
-  return (n/u[1]).toFixed(n/u[1]>=100?0:n/u[1]>=10?1:2)+u[0];
+  const v = n/u[1];
+  return (v>=100?v.toFixed(0):v>=10?v.toFixed(1):v.toFixed(2))+u[0];
 }
 function charsetSize(pw){
   let s=0;
@@ -93,30 +126,42 @@ function formatTime(sec){
   const name=units[best][0];
   if (val>=1e15) return "centuries";
   const num = compact(val);
-  const plural = (num.replace(/[KMBTQ]/g,"") != "1" && name!=="centuries") ? "s" : "";
+  const base = parseFloat(num);
+  const plural = (base !== 1 && name!=="centuries") ? "s" : "";
   return num+" "+name+plural;
 }
-function crackTime(pw, speed){
-  const cs = charsetSize(pw);
-  const guesses = Math.pow(cs, pw.length);
-  return (guesses/2)/speed;
+function crackTime(pw, speed){ const cs=charsetSize(pw); return (Math.pow(cs,pw.length)/2)/speed; }
+function strength(pw){
+  const cs=charsetSize(pw); const ent=Math.log2(Math.pow(cs,pw.length));
+  if (ent<28) return ["Very weak",0,"var(--bad)"];
+  if (ent<40) return ["Weak",25,"var(--bad)"];
+  if (ent<60) return ["Fair",50,"var(--warn)"];
+  if (ent<80) return ["Strong",75,"var(--good)"];
+  return ["Excellent",100,"var(--good)"];
 }
 const pw=document.getElementById('pw');
 const result=document.getElementById('result');
 const hint=document.getElementById('hint');
 const bar=document.getElementById('bar');
+const label=document.getElementById('label');
 const tog=document.getElementById('tog');
 tog.addEventListener('click',()=>{ pw.type = pw.type==='password'?'text':'password'; });
+document.getElementById('gen').addEventListener('click',()=>{
+  const chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+";
+  let s=""; const a=new Uint32Array(16); crypto.getRandomValues(a);
+  for (let i=0;i<16;i++) s+=chars[a[i]%chars.length];
+  pw.value=s; pw.type='text'; pw.dispatchEvent(new Event('input'));
+});
+document.getElementById('copy').addEventListener('click',()=>{ if(pw.value) navigator.clipboard.writeText(pw.value); });
+document.getElementById('clear').addEventListener('click',()=>{ pw.value=''; pw.dispatchEvent(new Event('input')); });
 pw.addEventListener('input',()=>{
   const v=pw.value;
-  if (!v){ result.textContent='Enter a password to begin.'; hint.textContent=''; bar.style.width='0%'; return; }
-  const t90=crackTime(v,SPEED_1990);
-  const tnow=crackTime(v,SPEED_TODAY);
+  if (!v){ result.textContent='Enter a password to begin.'; hint.textContent=''; bar.style.width='0%'; bar.style.background='var(--blue)'; label.textContent='—'; label.style.color='var(--muted)'; return; }
+  const t90=crackTime(v,SPEED_1990); const tnow=crackTime(v,SPEED_TODAY);
   result.innerHTML = `In 1990, your password would have taken <span class="blue">${formatTime(t90)}</span> to decode with a machine. Today, it would only take <span class="darkblue">${formatTime(tnow)}</span>`;
-  const cs=charsetSize(v);
-  const entropy = Math.log2(Math.pow(cs,v.length));
-  const pct = Math.min(100, Math.max(2, entropy/128*100));
-  bar.style.width = pct+'%';
+  const cs=charsetSize(v); const entropy=Math.log2(Math.pow(cs,v.length));
+  const [name,pct,color]=strength(v);
+  bar.style.width=pct+'%'; bar.style.background=color; label.textContent=name; label.style.color=color;
   hint.textContent = `Length ${v.length} · charset ${cs} · ~${compact(entropy)} bits of entropy`;
 });
 </script>
