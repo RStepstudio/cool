@@ -56,6 +56,7 @@
   .strength-bar > div { height:100%; width:0%; border-radius:6px; transition:width .5s cubic-bezier(.2,.8,.2,1), background .3s; }
   .strength-label { font-size:.9rem; font-weight:600; min-width:90px; text-align:right; }
   .result { margin-top:26px; font-size:1.25rem; line-height:1.7; text-align:center; min-height:72px; opacity:0; animation:fadeIn .6s .2s forwards; transition:transform .3s; }
+  .live { margin-top:10px; font-size:.95rem; text-align:center; color:var(--muted); min-height:20px; transition:color .3s; }
   .result.pop { animation:pop .4s cubic-bezier(.2,.8,.2,1); }
   @keyframes pop { 0%{transform:scale(.96)} 50%{transform:scale(1.03)} 100%{transform:scale(1)} }
   @keyframes fadeIn { to{opacity:1} }
@@ -100,6 +101,7 @@
         <div class="strength-label" id="label">—</div>
       </div>
       <div class="result" id="result">Enter a password to begin.</div>
+      <div class="live" id="live"></div>
       <div class="hint" id="hint"></div>
       <div class="breach" id="breach"></div>
     </section>
@@ -160,6 +162,8 @@ function strength(pw){
 }
 const pw=document.getElementById('pw');
 const result=document.getElementById('result');
+const live=document.getElementById('live');
+let lastEntropy=0;
 const hint=document.getElementById('hint');
 const bar=document.getElementById('bar');
 const label=document.getElementById('label');
@@ -194,11 +198,19 @@ async function checkBreach(pw){
 }
 pw.addEventListener('input',()=>{
   const v=pw.value;
-  if (!v){ result.textContent='Enter a password to begin.'; hint.textContent=''; bar.style.width='0%'; bar.style.background='var(--blue)'; label.textContent='—'; label.style.color='var(--muted)'; breach.textContent=''; return; }
+  if (!v){ result.textContent='Enter a password to begin.'; hint.textContent=''; bar.style.width='0%'; bar.style.background='var(--blue)'; label.textContent='—'; label.style.color='var(--muted)'; breach.textContent=''; live.textContent=''; lastEntropy=0; return; }
   const t90=crackTime(v,SPEED_1990); const tnow=crackTime(v,SPEED_TODAY);
   result.innerHTML = `In 1990, your password would have taken <span class="blue">${formatTime(t90)}</span> to decode with a machine. Today, it would only take <span class="darkblue">${formatTime(tnow)}</span>`;
   result.classList.remove('pop'); void result.offsetWidth; result.classList.add('pop');
   const cs=charsetSize(v); const entropy=Math.log2(Math.pow(cs,v.length));
+  let msg='Keep typing…';
+  if (v.length===0) msg='';
+  else if (entropy < lastEntropy) msg='Oops, weaker now';
+  else if (entropy-lastEntropy > 10) msg='Much harder now!';
+  else if (entropy > lastEntropy) msg='Getting stronger…';
+  else msg='No change';
+  live.textContent=msg; live.style.color = entropy>=lastEntropy?'var(--good)':'var(--bad)';
+  lastEntropy=entropy;
   const [name,pct,color]=strength(v);
   bar.style.width=pct+'%'; bar.style.background=color; label.textContent=name; label.style.color=color;
   hint.textContent = `Length ${v.length} · charset ${cs} · ~${compact(entropy)} bits of entropy`;
