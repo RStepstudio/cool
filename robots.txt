@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://password-checker.pages.dev/sitemap.xml
