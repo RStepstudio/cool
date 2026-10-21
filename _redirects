@@ -1,0 +1,7 @@
+# Block dev-only files from public access
+/functions/*    /            301
+/package.json   /            301
+/wrangler.toml  /            301
+/README.md      /            301
+/readme.txt     /            301
+/llms.txt       /            200
