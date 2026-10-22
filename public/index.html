@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Good Is My Password? Free Password Strength Checker (2026)</title>
+<meta name="description" content="How good is my password? Check password strength instantly. See how long your password would take to crack in 1990 vs today, plus a live breach check. Free, private, runs in your browser.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="__SITE_ORIGIN__/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How Good Is My Password?">
+<meta property="og:description" content="Check password strength and 1990-vs-today crack time instantly in your browser.">
+<meta property="og:url" content="__SITE_ORIGIN__/">
+<meta property="og:site_name" content="PassMeter">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How Good Is My Password?">
+<meta name="twitter:description" content="Check password strength and crack time instantly.">
+<meta name="author" content="PassMeter Editorial Team">
+<meta name="theme-color" content="#2563eb">
+<meta name="geo.region" content="US">
+<meta name="geo.placename" content="United States">
+<meta name="geo.position" content="37.0902;-95.7129">
+<meta name="ICBM" content="37.0902, -95.7129">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2'%3E%3Crect x='3' y='11' width='18' height='11' rx='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://api.pwnedpasswords.com">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"PassMeter","alternateName":"How Good Is My Password","url":"__SITE_ORIGIN__/","applicationCategory":"SecurityApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Free browser-based password strength checker that shows how long a password would take to crack in 1990 versus today and checks known breaches anonymously.","datePublished":"2026-01-05","dateModified":"2026-10-21","inLanguage":"en","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["Live strength meter","1990 vs today crack-time estimate","Anonymous breach check","Cryptographically secure password generator","Daily and weekly visit statistics"],"publisher":{"@type":"Organization","name":"PassMeter","url":"__SITE_ORIGIN__/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I check if my password is strong?","acceptedAnswer":{"@type":"Answer","text":"Type it into a browser-based password strength checker like PassMeter. It scores the password in your browser, shows a live strength meter with the exact number of bits of entropy, and estimates how long it would take to crack."}},{"@type":"Question","name":"Is it safe to check my password online?","acceptedAnswer":{"@type":"Answer","text":"Yes, if the checker runs entirely in your browser. PassMeter scores strength with client-side JavaScript so the password never leaves your device, and the optional breach check sends only a five-character prefix of a SHA-1 hash using k-anonymity."}},{"@type":"Question","name":"How long would it take to crack my password in 1990?","acceptedAnswer":{"@type":"Answer","text":"On a 1990 workstation guessing roughly a thousand times per second, almost any modern password was effectively unbreakable. PassMeter shows that 1990 estimate next to today's, where a modern GPU cluster guesses tens of billions of times per second."}},{"@type":"Question","name":"What is a good bit count for a password?","acceptedAnswer":{"@type":"Answer","text":"At least 60 bits for everyday accounts and 80 bits or more for email, banking and password manager master keys. A 16-character random password from a 94-character alphabet is roughly 105 bits."}},{"@type":"Question","name":"How do I make a strong password I can remember?","acceptedAnswer":{"@type":"Answer","text":"Use a passphrase of four or five unrelated words, or let a password manager generate and store a long random password. Avoid predictable substitutions like P@ssw0rd, which cracking tools try first."}},{"@type":"Question","name":"How many visits does this site get?","acceptedAnswer":{"@type":"Answer","text":"The counter under the tool shows visits today, visits this week and all-time visits. Counts come from a Cloudflare Worker backed by a KV namespace, with a local fallback if the backend is unavailable."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"__SITE_ORIGIN__/"}]}</script>
+<style>
+  .hero{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .hero-txt{flex:1;min-width:260px}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;color:var(--good);background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.25);padding:5px 11px;border-radius:999px;margin-bottom:14px}
+  .sub{color:var(--muted);margin:0 0 24px;line-height:1.7}
+  .input-wrap{position:relative}
+  input[type=password],input[type=text]{width:100%;padding:16px 56px 16px 18px;font-size:1.1rem;border-radius:14px;border:1px solid #d1d5db;background:rgba(255,255,255,.9);color:var(--text);outline:none;transition:border-color .25s,box-shadow .25s,transform .25s}
+  html[data-theme="dark"] input[type=password],html[data-theme="dark"] input[type=text]{background:rgba(255,255,255,.05);border-color:rgba(148,163,184,.25)}
+  input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(59,130,246,.18);transform:translateY(-1px)}
+  .toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;display:flex;padding:6px;border-radius:8px;transition:color .2s,transform .2s,background .2s}
+  .toggle:hover{color:var(--blue);background:var(--chip);transform:translateY(-50%) scale(1.08)}
+  .row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:10px;border:1px solid #d1d5db;background:rgba(255,255,255,.9);color:var(--text);cursor:pointer;font-size:.9rem;transition:all .2s;font-family:inherit}
+  html[data-theme="dark"] .btn{background:rgba(255,255,255,.05);border-color:rgba(148,163,184,.25)}
+  .btn:hover{border-color:var(--accent);color:var(--blue);transform:translateY(-1px);box-shadow:0 8px 18px rgba(30,58,138,.1)}
+  .btn:active{transform:translateY(0)}
+  .btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+  html[data-theme="dark"] .btn.primary{color:#0b1220}
+  .btn.primary:hover{background:var(--darkblue);color:#fff}
+  html[data-theme="dark"] .btn.primary:hover{color:#0b1220}
+  .strength{margin-top:22px;display:flex;align-items:center;gap:12px}
+  .strength-bar{flex:1;height:10px;border-radius:6px;background:rgba(30,58,138,.1);overflow:hidden}
+  .strength-bar>div{height:100%;width:0%;border-radius:6px;transition:width .5s cubic-bezier(.2,.8,.2,1),background .3s}
+  .strength-label{font-size:.9rem;font-weight:600;min-width:96px;text-align:right}
+  .era{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin-top:20px;padding:20px;border-radius:18px;background:linear-gradient(120deg,rgba(37,99,235,.09),rgba(30,58,138,.05));border:1px solid var(--border)}
+  .era .col{text-align:center}
+  .era .k{font-size:.74rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:6px}
+  .era .v{font-size:1.45rem;font-weight:700;line-height:1.25;word-break:break-word}
+  .era .arrow{color:var(--muted);display:flex;align-items:center}
+  .era .today .v{color:var(--darkblue)}
+  .era .y1990 .v{color:var(--blue)}
+  @media (max-width:560px){ .era{grid-template-columns:1fr} .era .arrow{justify-content:center;transform:rotate(90deg)} }
+  .live{margin-top:12px;font-size:.95rem;text-align:center;color:var(--muted);min-height:20px;transition:color .3s}
+  .hint{margin-top:6px;font-size:.85rem;color:var(--muted);text-align:center}
+  .breach{margin-top:10px;font-size:.85rem;text-align:center;min-height:20px;display:flex;align-items:center;justify-content:center;gap:6px}
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:34px}
+  .feat{background:rgba(255,255,255,.6);border:1px solid var(--border);border-radius:16px;padding:18px;transition:transform .25s,box-shadow .25s}
+  html[data-theme="dark"] .feat{background:rgba(255,255,255,.04)}
+  .feat:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(30,58,138,.12)}
+  .feat h3{margin:0 0 6px;font-size:1rem;color:var(--darkblue)}
+  .feat p{margin:0;font-size:.85rem;color:var(--muted);line-height:1.6}
+  .cta{display:block;margin-top:26px;padding:20px;border-radius:18px;text-align:center;text-decoration:none;background:linear-gradient(120deg,var(--blue),var(--darkblue));color:#fff;font-weight:600;transition:transform .25s,box-shadow .25s}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(30,58,138,.25);color:#fff}
+  html[data-theme="dark"] .cta{color:#0b1220}
+  .pop{animation:pop .45s cubic-bezier(.2,.8,.2,1)}
+  @keyframes pop{0%{transform:scale(.96);opacity:.4}55%{transform:scale(1.03);opacity:1}100%{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+  <nav class="topbar">
+    <div class="brand"><a href="/" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> PassMeter</a></div>
+    <div class="navlinks-right">
+      <div class="navlinks">
+        <a href="/">Checker</a>
+        <a href="/"password-strength-guide>Guide</a>
+        <a href="/"password-generator>Generator</a>
+        <a href="/"password-crack-time>Crack time</a>
+        <a href="/"have-i-been-pwned-checker>Breaches</a>
+        <a href="/"top-10-password-checkers>Top 10</a>
+      </div>
+      <button class="theme-toggle" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="i-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="i-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
+  </nav>
+  <main>
+    <section class="card">
+      <div class="hero">
+        <div class="hero-txt">
+          <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 100% browser-only &middot; nothing uploaded</span>
+          <h1>How good is my password?</h1>
+          <p class="sub">Type a password to see how long it would take to crack on a 1990 machine versus a modern GPU cluster. Results update live as you type, and the breach check is fully anonymous.</p>
+        </div>
+      </div>
+
+      <div class="input-wrap">
+        <input id="pw" type="password" autocomplete="off" spellcheck="false" placeholder="Enter a password" aria-label="Password to test">
+        <button class="toggle" id="tog" aria-label="Toggle password visibility"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="gen"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg> Generate strong password</button>
+        <button class="btn" id="copy"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+        <button class="btn" id="clear"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg> Clear</button>
+      </div>
+
+      <div class="strength">
+        <div class="strength-bar"><div id="bar"></div></div>
+        <div class="strength-label" id="label">—</div>
+      </div>
+
+      <div class="era" id="era">
+        <div class="col y1990">
+          <div class="k">In 1990</div>
+          <div class="v" id="t1990">—</div>
+        </div>
+        <div class="arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
+        <div class="col today">
+          <div class="k">Today</div>
+          <div class="v" id="tnow">—</div>
+        </div>
+      </div>
+
+      <p class="live" id="live"></p>
+      <p class="hint" id="hint"></p>
+      <div class="breach" id="breach"></div>
+
+      <div class="summary">
+        <p class="summary-h">In brief</p>
+        <ul>
+          <li><strong>How good is my password?</strong> &mdash; PassMeter scores it instantly in your browser, with no account and no upload.</li>
+          <li><strong>1990 vs today</strong> &mdash; the same password against a 1990 workstation (about 1,000 guesses per second) and a modern GPU cluster (about 10 billion guesses per second).</li>
+          <li><strong>Live breach check</strong> &mdash; anonymous, using k-anonymity, so your password never leaves the page.</li>
+          <li><strong>What to aim for</strong> &mdash; 16+ random characters, or a five-word passphrase, for 80 bits of entropy or more.</li>
+        </ul>
+      </div>
+
+      <h2>How does the checker work?</h2>
+      <p>PassMeter measures the true keyspace of your password: the size of the character classes you actually use, raised to the power of the length. That keyspace is halved (an attacker gets halfway on average) and then divided by the cracking speed of a 1990 workstation (about 1,000 guesses per second) and of a modern GPU cluster (about 10 billion guesses per second). The result is a realistic crack-time estimate for both eras, plus the exact number of bits of entropy.</p>
+
+      <h3>What do the two times actually mean?</h3>
+      <p>The 1990 figure shows how safe a password looked to the average person in 1990. The modern figure shows what the same password is worth to an attacker today. The gap between them is why passwords that felt strong three decades ago are now worthless.</p>
+
+      <h3>Why is the breach check anonymous?</h3>
+      <p>The check uses k-anonymity: your browser hashes the password with SHA-1, sends only the first five characters of that hash, and matches the returned suffixes locally. The server never receives your password or your full hash, so it cannot identify you or store your credential.</p>
+
+      <h2>Frequently asked questions</h2>
+      <div class="faq">
+        <details open><summary>How do I check if my password is strong?</summary><div class="answer-body">Type it into the field above. The meter, the bit count and both crack times update on every keystroke, and the breach check runs a moment after you stop typing.</div></details>
+        <details><summary>Is it safe to check my password online?</summary><div class="answer-body">It is safe here. Strength is scored entirely by JavaScript in your browser, so the password never reaches a server. The only outbound request is the anonymised hash-prefix lookup used for breach counts.</div></details>
+        <details><summary>How long would my password take to crack in 1990?</summary><div class="answer-body">On a 1990 workstation guessing roughly 1,000 times per second, nearly every modern password was uncrackable in practice. Today's figure uses a far more realistic 10 billion guesses per second, which is what a rented GPU cluster can achieve.</div></details>
+        <details><summary>What is a good bit count for a password?</summary><div class="answer-body">At least 60 bits for everyday accounts, and 80 bits or more for email, banking and password manager master keys. A 16-character random password from a 94-character alphabet is about 105 bits.</div></details>
+        <details><summary>How do I make a strong password I can remember?</summary><div class="answer-body">Use a passphrase of four or five unrelated words, or let a password manager generate a long random password for you. Avoid predictable edits like <code>P@ssw0rd</code>, which cracking tools try within the first few hundred guesses.</div></details>
+        <details><summary>How many people visit this site?</summary><div class="answer-body">The counter below the tool shows visits today, visits this week and all-time visits. Counts come from a Cloudflare Worker backed by a KV namespace, with a local fallback if the backend is unavailable.</div></details>
+      </div>
+
+      <h2>Sources and further reading</h2>
+      <ul class="sources">
+        <li><a href="https://pages.nist.gov/800-63-4/sp800-63b.html" rel="nofollow noopener" target="_blank">NIST SP 800-63B</a> &mdash; Digital Identity Guidelines: authenticator and password guidance.</li>
+        <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" rel="nofollow noopener" target="_blank">OWASP Password Storage Cheat Sheet</a> &mdash; how passwords should be hashed and stored.</li>
+        <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Credential_Stuffing_Prevention_Cheat_Sheet.html" rel="nofollow noopener" target="_blank">OWASP Credential Stuffing Prevention Cheat Sheet</a> &mdash; why password reuse cascades into breaches.</li>
+        <li><a href="https://haveibeenpwned.com/Passwords" rel="nofollow noopener" target="_blank">Have I Been Pwned Pwned Passwords</a> &mdash; the k-anonymity range API used for the breach check.</li>
+      </ul>
+
+      <h2>Related questions</h2>
+      <div class="related">
+        <a href="/"password-strength-guide><div class="t">How do I create a strong password?</div><div class="d">Practical guide: length beats complexity, and why passphrases win.</div></a>
+        <a href="/"password-crack-time><div class="t">How long does it take to crack a password?</div><div class="d">How 1990 hardware compares to modern GPU clusters.</div></a>
+        <a href="/"password-entropy-calculator><div class="t">What is password entropy?</div><div class="d">The bit math behind every strength score.</div></a>
+        <a href="/"common-passwords-list><div class="t">Which passwords should I avoid?</div><div class="d">The words crackers try first, and why tricks fail.</div></a>
+        <a href="/"best-password-manager><div class="t">Which password manager is best?</div><div class="d">Comparison of the leading vaults in 2026.</div></a>
+        <a href="/"top-10-password-checkers><div class="t">What are the top 10 checkers?</div><div class="d">Our ranked comparison, with PassMeter first.</div></a>
+      </div>
+
+      <a class="cta" href="/"password-generator>Generate a strong 16-character password &rarr;</a>
+
+      <div class="author">
+        <div class="avatar">PM</div>
+        <div>
+          <p class="name">PassMeter Editorial Team</p>
+          <p>Security editors focused on applied cryptography and credential safety. Estimates align with OWASP guidance and NIST SP 800-63B recommendations on length and rotation. <a href="/">Test your own password</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tips" class="features">
+      <div class="feat"><h3>Length matters</h3><p>Each extra character multiplies the search space exponentially. Aim for 16+.</p></div>
+      <div class="feat"><h3>Mix character types</h3><p>Upper, lower, digits and symbols widen the charset you can draw from.</p></div>
+      <div class="feat"><h3>Avoid common words</h3><p>Dictionary attacks crack "password123" in under a second.</p></div>
+      <div class="feat"><h3>Use a manager</h3><p>Let a password manager generate and store unique credentials for every site.</p></div>
+    </section>
+
+    <div class="visits" data-visits><span class="v-item"><b>0</b> today</span><span class="v-sep"></span><span class="v-item"><b>0</b> this week</span><span class="v-sep"></span><span class="v-item"><b>0</b> all time</span></div>
+    <footer>PassMeter &middot; free, private, browser-only password tools &middot; estimates: 1990 at 1k guesses/s, today at 10B guesses/s</footer>
+  </main>
+<script>
+const SPEED_1990 = 1e3;
+const SPEED_TODAY = 1e10;
+const ICON_OK='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const ICON_BAD='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
+function compact(n){
+  if (!isFinite(n)) return "∞";
+  if (n < 1000) return (n<10?n.toFixed(2):n<100?n.toFixed(1):Math.round(n));
+  const units = [["K",1e3],["M",1e6],["B",1e9],["T",1e12],["Q",1e15]];
+  let u = units[0];
+  for (const x of units){ if (n >= x[1]) u=x; else break; }
+  const v = n/u[1];
+  return (v>=100?v.toFixed(0):v>=10?v.toFixed(1):v.toFixed(2))+u[0];
+}
+function charsetSize(pw){
+  let s=0;
+  if (/[a-z]/.test(pw)) s+=26;
+  if (/[A-Z]/.test(pw)) s+=26;
+  if (/[0-9]/.test(pw)) s+=10;
+  if (/[^a-zA-Z0-9]/.test(pw)) s+=32;
+  if (s===0) s=1;
+  return s;
+}
+function formatTime(sec){
+  if (!isFinite(sec) || sec < 0) return "forever";
+  if (sec < 1) return "instantly";
+  const units = [["second",1],["minute",60],["hour",3600],["day",86400],["year",31557600],["century",3155760000]];
+  let best=0;
+  for (let i=0;i<units.length;i++){ if (sec/units[i][1] >=1) best=i; }
+  const val=sec/units[best][1];
+  const name=units[best][0];
+  if (val>=1e15) return "centuries";
+  const num = compact(val);
+  const base = parseFloat(num);
+  let unit = name;
+  if (name === "century") unit = "centuries";
+  else if (base !== 1) unit = name + "s";
+  return num+" "+unit;
+}
+function crackTime(pw, speed){ const cs=charsetSize(pw); return (Math.pow(cs,pw.length)/2)/speed; }
+function strength(pw, breachCount){
+  const cs=charsetSize(pw); const ent=Math.log2(Math.pow(cs,pw.length));
+  if (breachCount !== null && breachCount > 0) {
+    // Breached passwords are TERRIBLE regardless of complexity
+    if (breachCount >= 1000000) return ["🚨 EXPOSED - AVOID!", 0, "var(--bad)"];
+    if (breachCount >= 100000) return ["⛔ COMPROMISED", 0, "var(--bad)"];
+    if (breachCount >= 10000) return ["⚠️ BREACHED", 5, "var(--bad)"];
+    if (breachCount >= 1000) return ["Very Weak (Breached)", 10, "var(--bad)"];
+    return ["Weak (Breached)", 15, "var(--bad)"];
+  }
+  if (ent<28) return ["Very weak",0,"var(--bad)"];
+  if (ent<40) return ["Weak",25,"var(--bad)"];
+  if (ent<60) return ["Fair",50,"var(--warn)"];
+  if (ent<80) return ["Strong",75,"var(--good)"];
+  return ["Excellent",100,"var(--good)"];
+}
+const pw=document.getElementById('pw');
+const live=document.getElementById('live');
+const t1990=document.getElementById('t1990');
+const tnow=document.getElementById('tnow');
+let lastEntropy=0;
+const hint=document.getElementById('hint');
+const bar=document.getElementById('bar');
+const label=document.getElementById('label');
+const tog=document.getElementById('tog');
+tog.addEventListener('click',()=>{ pw.type = pw.type==='password'?'text':'password'; });
+document.getElementById('gen').addEventListener('click',()=>{
+  const chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+";
+  let s=""; const a=new Uint32Array(16); crypto.getRandomValues(a);
+  for (let i=0;i<16;i++) s+=chars[a[i]%chars.length];
+  pw.value=s; pw.type='text'; pw.dispatchEvent(new Event('input'));
+});
+document.getElementById('copy').addEventListener('click',()=>{ if(pw.value) navigator.clipboard.writeText(pw.value); });
+document.getElementById('clear').addEventListener('click',()=>{ pw.value=''; pw.dispatchEvent(new Event('input')); });
+const breach=document.getElementById('breach');
+let breachTimer;
+let currentBreachCount = null;
+async function sha1Hex(str){
+  const buf=await crypto.subtle.digest('SHA-1', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+async function checkBreach(value){
+  if (!value || !window.crypto?.subtle){ breach.textContent=''; currentBreachCount=null; updateStrength(); return; }
+  breach.innerHTML = ICON_BAD + '<span>Checking breaches…</span>';
+  try {
+    const hash=await sha1Hex(value);
+    const prefix=hash.slice(0,5); const suffix=hash.slice(5);
+    const res=await fetch('https://api.pwnedpasswords.com/range/'+prefix);
+    const text=await res.text();
+    const line=text.split('\n').find(l=>l.startsWith(suffix));
+    if (line){ 
+      const count=Number(line.split(':')[1].trim());
+      currentBreachCount = count;
+      breach.style.color='var(--bad)'; 
+      if (count >= 1000000) {
+        breach.innerHTML = ICON_BAD + '<span>🚨 FOUND IN ' + compact(count) + ' BREACHES - THIS PASSWORD IS COMPROMISED!</span>'; 
+      } else if (count >= 100000) {
+        breach.innerHTML = ICON_BAD + '<span>⛔ FOUND IN ' + compact(count) + ' BREACHES - DO NOT USE THIS PASSWORD!</span>'; 
+      } else if (count >= 10000) {
+        breach.innerHTML = ICON_BAD + '<span>⚠️ FOUND IN ' + compact(count) + ' BREACHES - EXTREMELY RISKY!</span>'; 
+      } else {
+        breach.innerHTML = ICON_BAD + '<span>Found in ' + compact(count) + ' known breaches</span>'; 
+      }
+      breach.style.animation = 'pulse 1s ease-in-out infinite';
+    }
+    else { 
+      currentBreachCount = 0;
+      breach.style.color='var(--good)'; 
+      breach.innerHTML = ICON_OK + '<span>✓ Not found in known breaches</span>'; 
+      breach.style.animation = 'none';
+    }
+    updateStrength();
+  } catch(e){ 
+    breach.style.color='var(--muted)'; 
+    breach.innerHTML = '<span>Breach check unavailable offline</span>'; 
+    currentBreachCount=null;
+    updateStrength();
+  }
+}
+function updateStrength(){
+  const v=pw.value;
+  if (!v){
+    t1990.textContent='—'; tnow.textContent='—';
+    hint.textContent=''; bar.style.width='0%'; bar.style.background='var(--blue)';
+    label.textContent='—'; label.style.color='var(--muted)';
+    breach.textContent=''; live.textContent=''; lastEntropy=0;
+    currentBreachCount=null;
+    document.title = 'How Good Is My Password? Free Password Strength Checker (2026)';
+    return;
+  }
+  const s90=crackTime(v,SPEED_1990); const snow=crackTime(v,SPEED_TODAY);
+  t1990.textContent=formatTime(s90);
+  tnow.textContent=formatTime(snow);
+  const era=document.getElementById('era');
+  era.classList.remove('pop'); void era.offsetWidth; era.classList.add('pop');
+  const cs=charsetSize(v); const entropy=Math.log2(Math.pow(cs,v.length));
+  let msg='Keep typing…';
+  if (entropy < lastEntropy) msg='Oops, weaker now';
+  else if (entropy-lastEntropy > 10) msg='Much harder now!';
+  else if (entropy > lastEntropy) msg='Getting stronger…';
+  else msg='No change';
+  live.textContent=msg; live.style.color = entropy>=lastEntropy?'var(--good)':'var(--bad)';
+  lastEntropy=entropy;
+  const [name,pct,color]=strength(v, currentBreachCount);
+  bar.style.width=pct+'%'; bar.style.background=color; label.textContent=name; label.style.color=color;
+  hint.textContent = `Length ${v.length} · charset ${cs} · ~${compact(entropy)} bits of entropy`;
+  document.title = name.replace(/🚨|⛔|⚠️|✓/g,'').trim() + " password? — PassMeter";
+}
+pw.addEventListener('input',()=>{
+  const v=pw.value;
+  if (!v){
+    updateStrength();
+    return;
+  }
+  updateStrength();
+  clearTimeout(breachTimer); breachTimer=setTimeout(()=>checkBreach(v),300);
+});
+</script>
+<script src="/site.js" defer></script>
+</body>
+</html>
